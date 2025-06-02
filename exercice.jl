@@ -12,7 +12,8 @@ function backsolve(R::UpperTriangular, b)
 end
 
 # 2. Modifiez la fonction suivante pour qu'elle renvoie la solution x
-#    du système Hessenberg supérieur Hx = b à l'aide de rotations ou
+#    du système Hessenberg supérieur Hx = b ou du problème aux moindres
+#    carrés min ‖Hx - b‖ à l'aide de rotations ou
 #    réflexions de Givens et d'une remontée triangulaire.
 #    Votre fonction peut modifier H et b si nécessaire.
 #    Il n'est pas nécessaire de garder les rotations en mémoire et la
@@ -29,6 +30,7 @@ end
 # vérification
 using Test
 for n ∈ (10, 20, 30)
+    # square system
     A = rand(n, n)
     A[diagind(A)] .+= 1
     b = rand(n)
@@ -38,4 +40,11 @@ for n ∈ (10, 20, 30)
     H = UpperHessenberg(A)
     x = hessenberg_solve(copy(H), copy(b))
     @test norm(H * x - b) ≤ sqrt(eps()) * norm(b)
+    # slightly overdetermined least squares
+    A = rand(n + 1, n)
+    A[diagind(A)] .+= 1
+    H = UpperHessenberg(A)
+    x_ls = hessenberg_solve(copy(H), copy(b))
+    x_qr = H \ b
+    @test norm(x_ls - x_qr) ≤ sqrt(eps()) * norm(x_qr)
 end

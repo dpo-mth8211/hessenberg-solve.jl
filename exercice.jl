@@ -44,6 +44,7 @@ for n ∈ (10, 20, 30)
     A = rand(n + 1, n)
     A[diagind(A)] .+= 1
     H = UpperHessenberg(A)
+    b = rand(n + 1)
     x_ls = hessenberg_solve(copy(H), copy(b))
     x_qr = H \ b
     @test norm(x_ls - x_qr) ≤ sqrt(eps()) * norm(x_qr)
